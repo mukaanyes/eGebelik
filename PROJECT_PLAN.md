@@ -125,7 +125,7 @@ Claude Code ile maksimum hız, tip güvenliği ve tek kod tabanından hem **PWA*
 
 | Katman | Teknoloji | Seçim Nedeni | 
 | ----- | ----- | ----- | 
-| **Framework** | **Next.js 15+ (App Router)** + TypeScript, `output: 'standalone'` | SEO, SSR, API Routes ve Route Groups ile `(patient)` ve `(doctor)` arayüzlerinin tek projede temiz ayrımı. Standalone çıktı, Vercel'e bağımlı olmadan küçük bir Docker imajı olarak çalışır. | 
+| **Framework** | **Next.js 16+ (App Router)** + TypeScript, `output: 'standalone'` | SEO, SSR, API Routes ve Route Groups ile `(patient)` ve `(doctor)` arayüzlerinin tek projede temiz ayrımı. Standalone çıktı, Vercel'e bağımlı olmadan küçük bir Docker imajı olarak çalışır. | 
 | **Çoklu Dil (i18n)** | **next-intl** + ICU MessageFormat | App Router ve Server Components ile yerel uyum, dil önekli rotalar (`/tr/...`, `/en/...`), tip güvenli mesaj anahtarları, çoğul/cinsiyet kuralları, tarih/sayı biçimlendirme. | 
 | **Stil & UI** | **Tailwind CSS** + **shadcn/ui** + Framer Motion | Anne adayları için mobil öncelikli sıcak UI, doktorlar için veri yoğunluklu masaüstü/tablet klinik tabloları ve grafikler (`Recharts`). Mantıksal CSS sınıfları (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`) ile ileride sağdan sola (RTL) dil desteğine hazır. | 
 | **PWA Katmanı** | **Serwist** (Service Worker) + Web App Manifest | Çevrimdışı çalışma (offline tekme/kasılma sayacı), ana ekrana ekleme, randevu ve doktor önerisi Web Push bildirimleri (kendi VAPID anahtarlarımızla). | 
@@ -205,7 +205,10 @@ Claude Code ile maksimum hız, tip güvenliği ve tek kod tabanından hem **PWA*
 
 * **Değerlendirilen alternatif:** Düz PostgreSQL + Auth.js/Better Auth + Drizzle + MinIO (S3 uyumlu depolama). Daha hafif ve daha az hareketli parça içerir; ancak RLS'i oturum değişkenleriyle (`set_config('app.user_id', ...)`) elle kurmak, Realtime için ayrı bir çözüm (ör. Postgres `LISTEN/NOTIFY` + SSE) yazmak gerekir. VPS kaynakları çok kısıtlıysa (≤ 2 GB RAM) bu alternatife geçilir; karar bir ADR (`docs/adr/`) ile kaydedilir.
 
-* **KVKK avantajı:** VPS'in **Türkiye'deki bir veri merkezinde** olması, özel nitelikli sağlık verisinin yurt dışına aktarılması (KVKK md. 9) yükümlülüklerini büyük ölçüde ortadan kaldırır. Yedekler de Türkiye'de veya şifreli olarak tutulmalıdır (bkz. 6.5).
+* **KVKK ve sunucu konumu:** Mevcut sunucu **Hostinger KVM 8, Almanya** veri merkezindedir. Almanya (AB) için KVKK Kurulu'nun bir yeterlilik kararı bulunmadığından, sağlık verisinin bu sunucuda tutulması **KVKK md. 9 kapsamında yurt dışına aktarım** sayılır. Canlı hasta verisiyle çalışmadan önce iki yoldan biri seçilmelidir:
+  * **Almanya'da kalmak:** Hostinger ile Kurul'un yayımladığı **standart sözleşme** imzalanır ve imzadan sonra 5 iş günü içinde Kurul'a bildirilir; aydınlatma metninde yurt dışı aktarım açıkça belirtilir. Teknik tedbir olarak disk şifreleme ve şifreli yedekler zorunlu tutulur.
+  * **Türkiye'ye taşımak:** Production veritabanı ve dosya depolaması Türkiye'deki bir VPS'e taşınır (Docker Compose yapısı sayesinde taşıma, yedekten geri yükleme ile yapılabilir). Almanya sunucusu geliştirme/staging için kullanılmaya devam edebilir.
+  * Karar hukuk danışmanıyla netleştirilir. Geliştirme ve staging ortamında **gerçek kişisel veri kullanılmaz**, bu yüzden geliştirmeye Almanya sunucusunda hemen başlanabilir.
 
 ### 6.2. Sunucu Topolojisi
 
@@ -231,7 +234,9 @@ Claude Code ile maksimum hız, tip güvenliği ve tek kod tabanından hem **PWA*
    Staging: aynı sunucuda ayrı Compose projesi (staging.egebelik.com / api.staging.egebelik.com), ayrı DB ve anahtarlar.
 ```
 
-* **Varsayılan sunucu:** Ubuntu 24.04 LTS (veya güncel bir LTS Linux dağıtımı), Docker Engine + Compose eklentisi. VPS özellikleri henüz bilinmediği için plan genel tutulmuştur; öneri: **4 vCPU / 8 GB RAM / 80+ GB SSD** (production + staging).
+* **Sunucu:** **Hostinger KVM 8** (32 GB RAM, Almanya). 32 GB RAM, self-hosted Supabase ile production + staging ortamlarını aynı sunucuda rahatça çalıştırmaya yeter. İşletim sistemi olarak Ubuntu 24.04 LTS önerilir; Docker Engine + Compose eklentisi kurulur.
+
+* **Alan adı:** `egebelik.com` → web `egebelik.com`, API `api.egebelik.com`, staging `staging.egebelik.com` / `api.staging.egebelik.com`.
 
 * **Repo içi altyapı dosyaları (Faz 0'da oluşturulacak):**
 
@@ -387,7 +392,7 @@ Uygulama kullanıcı rolüne göre iki farklı deneyim dili sunar:
 
 2. **Veri Yerelliği ve Barındırma:**
 
-   * Uygulama, veritabanı, dosya depolama ve yedekler **kendi VPS'imizde**, tercihen **Türkiye'deki bir veri merkezinde** tutulur. Bu, sağlık verisinin yurt dışına aktarımını en aza indirir.
+   * Uygulama, veritabanı, dosya depolama ve yedekler **kendi VPS'imizde**, tutulur. Sunucu şu an Almanya'da olduğu için bu durum KVKK md. 9 kapsamında yurt dışı aktarımdır; standart sözleşme veya Türkiye'ye taşıma kararı canlıya çıkıştan önce verilir (bkz. 6.1).
 
    * Yurt dışına veri gönderebilecek üçüncü taraf servisler (AI API, e-posta/SMS sağlayıcısı, hata takip servisi) envanterde listelenir. **AI asistana** gönderilen mesajlar için kullanıcıya açık bilgilendirme yapılır, ad/iletişim gibi tanımlayıcı veriler prompta eklenmez ve gerekirse ayrı açık rıza alınır.
 
@@ -447,7 +452,7 @@ egebelik/
 │   ├── features/           # Modül bazlı kod (tracker/, community/, magazine/, ai/, doctor-portal/)
 │   ├── i18n/               # next-intl yapılandırması: config.ts, routing.ts, request.ts
 │   ├── lib/                # Supabase client, AI SDK, tarih/gebelik hesaplama yardımcıları
-│   ├── middleware.ts       # Dil tespiti + oturum yenileme
+│   ├── proxy.ts            # Dil tespiti + oturum yenileme (Next.js 16'da middleware.ts yerine)
 │   └── types/              # TypeScript ve DB tipleri
 ├── supabase/
 │   ├── migrations/         # SQL migrasyon dosyaları ve RLS politikaları (tek doğru kaynak)
@@ -522,11 +527,15 @@ Her yeni özellik için şu adımları izleyin:
 
 * \[x\] `CLAUDE.md` dosyasının yazılması.
 
-* \[ \] Branch koruma kuralları ve CI workflow'larının (`lint`, `typecheck`, `test`, `i18n:check`) kurulması.
+* \[x\] CI workflow'unun (`lint`, `typecheck`, `test`, `i18n:check`, build, Docker imajı) kurulması.
 
-* \[ \] Next.js + TypeScript + Tailwind + shadcn/ui + Serwist (PWA) iskeletinin ve `[locale]/(patient)` / `[locale]/(doctor)` / `[locale]/(auth)` route gruplarının oluşturulması.
+* \[ \] `main` için branch koruma kuralları.
 
-* \[ \] **i18n altyapısı:** next-intl kurulumu, `tr`/`en` mesaj dosyaları, dil tespiti middleware'i, dil seçici, tip güvenli anahtarlar ve eksik anahtar kontrol betiği.
+* \[x\] Next.js + TypeScript + Tailwind iskeletinin ve `[locale]/(patient)` / `[locale]/(doctor)` / `[locale]/(auth)` route gruplarının oluşturulması.
+
+* \[ \] shadcn/ui ve Serwist (PWA: manifest, service worker) kurulumu.
+
+* \[x\] **i18n altyapısı:** next-intl kurulumu, `tr`/`en` mesaj dosyaları, dil tespiti middleware'i, dil seçici, tip güvenli anahtarlar ve eksik anahtar kontrol betiği.
 
 * \[ \] **Yerel geliştirme ortamı:** Supabase CLI (`supabase start`), `supabase/migrations/` ve `seed.sql` yapısı.
 
@@ -618,18 +627,20 @@ Anne adaylarının ve hekimlerin güvenini zedelemeyecek **çift taraflı (B2C +
 
 1. ✅ GitHub'da `eGebelik` repository'si oluşturuldu; `PROJECT_PLAN.md` ve `CLAUDE.md` eklendi.
 
-2. VPS'i hazırlayın: Türkiye'de bir veri merkezi tercih edin, Ubuntu LTS kurun, SSH anahtarınızı ekleyin ve bir alan adının DNS kayıtlarını (`@`, `api`, `staging`, `api.staging`) sunucuya yönlendirin.
+2. VPS'i hazırlayın: Hostinger KVM 8'e Ubuntu 24.04 LTS kurun, SSH anahtarınızı ekleyin ve `egebelik.com` DNS kayıtlarını (`@`, `api`, `staging`, `api.staging`) sunucunun IP adresine yönlendirin.
 
 3. Terminalde `claude` komutunu çalıştırıp ilk görev olarak **Faz 0**'ın uygulama iskeletini (Next.js + i18n + Supabase yerel ortamı + CI) isteyin; ardından ayrı bir görevle VPS deploy altyapısını (`infra/`) kurdurun.
 
 ## 14. Açık Sorular
 
-1. **Diller:** İlk sürümde Türkçe + İngilizce varsayıldı. Başka diller (ör. Arapça — Türkiye'deki büyük Arapça konuşan nüfus nedeniyle, RTL gerektirir; Rusça, Almanca, Farsça) hedefleniyor mu? Hangi sırayla?
+**Netleşenler (27.11.2026):** Diller şimdilik Türkçe + İngilizce. Alan adı `egebelik.com`. Sunucu Hostinger KVM 8 (32 GB RAM, Almanya).
 
-2. **VPS:** Sağlayıcı, konum (Türkiye mi?), işletim sistemi ve kaynaklar (CPU/RAM/disk) nedir? 4 GB RAM'in altındaysa Bölüm 6.1'deki hafif alternatife geçilmesi gerekebilir.
+1. **KVKK ve sunucu konumu:** Almanya'da standart sözleşmeyle mi kalınacak, yoksa production verisi Türkiye'deki bir sunucuya mı taşınacak? (bkz. 6.1)
 
-3. **Alan adı:** Kullanılacak alan adı (ör. `egebelik.com`) ve e-posta gönderimi için SMTP sağlayıcısı.
+2. **E-posta:** Auth ve hatırlatma e-postaları için SMTP sağlayıcısı.
 
-4. **Yedek hedefi:** Sunucu dışı yedekler nerede tutulacak (ikinci bir Türkiye VPS'i, nesne depolama vb.)?
+3. **Yedek hedefi:** Sunucu dışı yedekler nerede tutulacak (ikinci bir VPS, nesne depolama vb.)?
 
-5. **AI asistan ve KVKK:** Anthropic API'ye gönderilecek sohbet içerikleri için hukuki değerlendirme (yurt dışı aktarım, ayrı açık rıza ihtiyacı).
+4. **AI asistan ve KVKK:** Anthropic API'ye gönderilecek sohbet içerikleri için hukuki değerlendirme (yurt dışı aktarım, ayrı açık rıza ihtiyacı).
+
+5. **Ek diller:** İleride Arapça (RTL), Rusça, Almanca, Farsça gibi diller eklenecekse hangi sırayla?

@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "title": "eGebelik",
+    "description": "With you through every week of pregnancy: tracking, guidance, community and a connection to your doctor."
+  },
+  "common": {
+    "appName": "eGebelik",
+    "comingSoon": "This section is coming soon."
+  },
+  "legal": {
+    "medicalDisclaimer": "This platform is not intended for emergency medical care. In an emergency, call {emergencyNumber} or go to the nearest health facility."
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "nav": {
+    "patient": {
+      "label": "Main menu",
+      "today": "Today",
+      "tools": "Tools",
+      "community": "Community",
+      "explore": "Explore",
+      "profile": "Profile"
+    },
+    "doctor": {
+      "label": "Doctor menu",
+      "patients": "My patients",
+      "calendar": "Calendar & appointments",
+      "alerts": "Alerts",
+      "profile": "Clinic profile"
+    }
+  },
+  "home": {
+    "greeting": "Welcome",
+    "intro": "Let's follow your pregnancy journey together. To begin, we'll ask for the first day of your last period or your due date.",
+    "startOnboarding": "Let's start",
+    "weekProgress": "{weeks} weeks {days, plural, =0 {} one {# day} other {# days}}",
+    "daysUntilDue": "{count, plural, one {# day} other {# days}} until your due date"
+  },
+  "doctor": {
+    "dashboard": {
+      "title": "My patients",
+      "empty": "You have no linked patients yet. Patients will be able to connect to you with your invite code."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "intro": "Sign in to pick up where you left off."
+    }
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "backHome": "Back to home"
+  }
+}

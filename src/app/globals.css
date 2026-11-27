@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Design tokens (PROJECT_PLAN.md §8). Patient UI is the default theme;
+   the doctor portal opts into the clinical theme with data-theme="clinical". */
+:root {
+  --background: #faf7f2;
+  --foreground: #2b2a28;
+  --muted: #6b6760;
+  --surface: #ffffff;
+  --border: #e9e2d8;
+  --primary: #e8998d;
+  --primary-foreground: #2b2a28;
+  --secondary: #8fa895;
+  --secondary-foreground: #1f2a22;
+}
+
+[data-theme="clinical"] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --muted: #475569;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --primary: #0f766e;
+  --primary-foreground: #ffffff;
+  --secondary: #8fa895;
+  --secondary-foreground: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root,
+  [data-theme="clinical"] {
+    --background: #161922;
+    --foreground: #ece7df;
+    --muted: #a8a29a;
+    --surface: #1f2330;
+    --border: #2c3140;
+    --primary: #e8998d;
+    --primary-foreground: #161922;
+    --secondary: #8fa895;
+    --secondary-foreground: #161922;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

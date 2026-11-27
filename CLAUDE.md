@@ -6,7 +6,9 @@ Bu dosya, bu repoda çalışan her Claude Code oturumu için bağlayıcı kurall
 
 eGebelik; anne adayları (`mother`), eşler (`partner`), kadın doğum uzmanları (`obgyn_doctor`), içerik uzmanları (`content_expert`) ve yöneticiler (`admin`) için çok dilli bir gebelik takip PWA'sıdır. Özel nitelikli sağlık verisi işler (KVKK). Tamamen **kendi VPS'imizde** (Docker Compose + self-hosted Supabase) çalışır.
 
-**Yığın:** Next.js 15+ (App Router, `output: 'standalone'`) · TypeScript (strict) · next-intl · Tailwind CSS + shadcn/ui · Serwist (PWA) · self-hosted Supabase (Postgres, Auth, Realtime, Storage) · Supabase JS Client + Zod · Anthropic Claude API (AI SDK) · Vitest + Playwright · Docker + Caddy + GitHub Actions.
+**Yığın:** Next.js 16+ (App Router, Cache Components, `output: 'standalone'`) · TypeScript (strict) · next-intl · Tailwind CSS + shadcn/ui · Serwist (PWA) · self-hosted Supabase (Postgres, Auth, Realtime, Storage) · Supabase JS Client + Zod · Anthropic Claude API (AI SDK) · Vitest + Playwright · Docker + Caddy + GitHub Actions.
+
+**Next.js 16 notu:** Bu sürüm eğitim verindeki Next.js'ten farklı olabilir (ör. `middleware.ts` yerine `src/proxy.ts`, Cache Components, `PageProps`/`LayoutProps` global tipleri). Kod yazmadan önce `node_modules/next/dist/docs/` altındaki ilgili rehberi oku (bkz. `AGENTS.md`). Cache Components açık olduğu için her `[locale]` layout'u ve sayfası `setRequestLocale(locale)` çağırmalıdır; aksi halde prerender hatası alınır.
 
 ## 2. Dil Kuralları
 

@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "title": "eGebelik",
+    "description": "Gebeliğin her haftasında yanınızda: takip, bilgi, topluluk ve doktorunuzla bağlantı."
+  },
+  "common": {
+    "appName": "eGebelik",
+    "comingSoon": "Bu bölüm yakında burada olacak."
+  },
+  "legal": {
+    "medicalDisclaimer": "Bu platform acil tıbbi müdahale amaçlı değildir. Acil durumlarda {emergencyNumber}'yi arayın veya en yakın sağlık kuruluşuna başvurun."
+  },
+  "localeSwitcher": {
+    "label": "Dil",
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "nav": {
+    "patient": {
+      "label": "Ana menü",
+      "today": "Bugün",
+      "tools": "Araçlar",
+      "community": "Topluluk",
+      "explore": "Keşfet",
+      "profile": "Profil"
+    },
+    "doctor": {
+      "label": "Doktor menüsü",
+      "patients": "Hastalarım",
+      "calendar": "Takvim & Randevular",
+      "alerts": "Uyarılar",
+      "profile": "Klinik Profilim"
+    }
+  },
+  "home": {
+    "greeting": "Hoş geldin",
+    "intro": "Gebelik yolculuğunu birlikte takip edelim. Başlamak için son adet tarihini ya da tahmini doğum tarihini gireceğiz.",
+    "startOnboarding": "Başlayalım",
+    "weekProgress": "{weeks} hafta {days, plural, =0 {} one {# gün} other {# gün}}",
+    "daysUntilDue": "Tahmini doğuma {count, plural, one {# gün} other {# gün}} kaldı"
+  },
+  "doctor": {
+    "dashboard": {
+      "title": "Hastalarım",
+      "empty": "Henüz eşleşmiş bir hastanız yok. Hastalarınız davet kodunuzla size bağlanabilecek."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Giriş yap",
+      "intro": "Hesabına giriş yaparak kaldığın yerden devam et."
+    }
+  },
+  "notFound": {
+    "title": "Aradığın sayfayı bulamadık",
+    "backHome": "Ana sayfaya dön"
+  }
+}
